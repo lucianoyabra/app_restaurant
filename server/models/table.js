@@ -5,7 +5,7 @@ var Schema = mongoose.Schema;
 
 var TableSchema = Schema({
     number: String,
-    capacity: Number,
+    capacity: String,
     descripcion: String
 });
 
