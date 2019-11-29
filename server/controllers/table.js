@@ -28,6 +28,10 @@ function saveTable(req,res){
     table.number = params.number;
     table.capacity = params.capacity;
     table.description = params.description;
+    table.positionX = params.positionX;
+    table.positionY= params.positionY;
+    table.salon = params.salon;
+    // table.id = params.id;
 
     table.save((err,tableStored)=>{
         if(err){
@@ -43,15 +47,22 @@ function saveTable(req,res){
 }
 
 function getTables(req,res){
-    var tableId = req.params.id;
-    Table.find((err, tables)=>{
-        if (err){
-            res.status(500).send({message: "No se pudo buscar las mesas"});
+    var salonId = req.params.id;
+    if(!salonId){
+        var find = Table.find().sort('number');
+    }else{
+        var find = Table.find({salon: salonId}).sort('number');
+    }
+    find.populate({
+       path: 'salon',
+    }).exec(function(err, tables){
+        if(err){
+            res.status(500).send({message: 'Error en el servidor'});
         }else{
             if(!tables){
-                res.status(404).send({message: "No existe mesa"});
+                res.status(404).send({message: 'No hay mesas'});
             }else{
-                res.status(200).send({tables: tables});
+                res.status(200).send({tables:tables});
             }
         }
     });
@@ -60,8 +71,16 @@ function getTables(req,res){
 function updateTable(req,res){
     var tableId = req.params.id;
     var update = req.body;
+    var tableUpdate = new Table();
 
-    Table.findByIdAndUpdate(tableId,update,(err,tableUpdated)=>{
+    tableUpdate.positionX = req.body.positionX;
+    tableUpdate.positionY = req.body.positionY;
+    tableUpdate.number = req.body.number;
+    tableUpdate.capacity = req.body.capacity;
+    tableUpdate.description = req.body.description;
+    tableUpdate.salon = req.body.salon;
+    alert('ya asigno table update');
+    Table.findByIdAndUpdate(tableId, tableUpdate,(err,tableUpdated)=>{
         if(err){
             res.status(500).send({message: 'Error en el servidor'});
         }else{
@@ -76,18 +95,31 @@ function updateTable(req,res){
 
 function deleteTable(req,res){
     var tableId = req.params.id;
-    
-    Song.findByIdAndRemove(tableId,(err,tableRemoved)=>{
-        if(err){
-            res.status(500).send({message: 'Error en el servidor'});
-        }else{
-            if(!tableRemoved){
-                res.status(404).send({message: 'No se pudo eliminar la cancion'});
+    if(!tableId){
+        Table.remove((err,tableRemoved)=>{
+            if(err){
+                res.status(500).send({message: 'Error en el servidor'});
             }else{
-                res.status(200).send({table: tableRemoved});
+                if(!tableRemoved){
+                    res.status(404).send({message: 'No se pudo eliminar la cancion'});
+                }else{
+                    res.status(200).send({table: tableRemoved});
+                }
             }
-        }
-    });
+        });
+    }else{
+        Table.findByIdAndRemove(tableId,(err,tableRemoved)=>{
+            if(err){
+                res.status(500).send({message: 'Error en el servidor'});
+            }else{
+                if(!tableRemoved){
+                    res.status(404).send({message: 'No se pudo eliminar la cancion'});
+                }else{
+                    res.status(200).send({table: tableRemoved});
+                }
+            }
+        });
+    }
 }
 
 

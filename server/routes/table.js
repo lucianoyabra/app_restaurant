@@ -12,9 +12,9 @@ var md_upload = multipart({uploadDir: './uploads/tables'});
 
 api.get('/table/:id', md_auth.ensureAuth  , TableController.getTable);
 api.post('/table', md_auth.ensureAuth  , TableController.saveTable);
-api.get('/tables/', md_auth.ensureAuth  , TableController.getTables);
+api.get('/tables/:id?', md_auth.ensureAuth  , TableController.getTables);
 api.put('/table/:id', md_auth.ensureAuth  , TableController.updateTable);
-api.delete('/table/:id', md_auth.ensureAuth  , TableController.deleteTable);
+api.delete('/table/:id?', md_auth.ensureAuth  , TableController.deleteTable);
 
 
 

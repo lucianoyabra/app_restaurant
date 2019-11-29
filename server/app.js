@@ -10,8 +10,10 @@ var table_routes = require('./routes/table');
 var reserve_routes = require('./routes/reserve');
 var event_routes = require('./routes/event');
 var user_routes = require('./routes/user');
+var salon_routes = require('./routes/salon');
 
-
+const cors = require("cors");
+app.use(cors());
 app.use(bodyparser.urlencoded({extended:false}));
 app.use(bodyparser.json());
 
@@ -31,6 +33,7 @@ app.use('/api',user_routes);
 app.use('/api',table_routes);
 app.use('/api',reserve_routes);
 app.use('/api',event_routes);
+app.use('/api',salon_routes);
 
 /*app.get('/pruebas', function(req,res){
     res.status(200).send({message: 'bienvenido al curso spotify'});
